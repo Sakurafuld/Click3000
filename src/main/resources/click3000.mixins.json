@@ -1,0 +1,13 @@
+{
+  "package": "com.sakurafuld.click3000.mixin",
+  "refmap": "click3000.refmap.json",
+  "mixins": [
+    "LivingEntityAccessor",
+    "ServerGamePacketListenerImplMixin"
+  ],
+  "server": [
+  ],
+  "client": [
+    "MultiPlayerGameModeMixin"
+  ]
+}
