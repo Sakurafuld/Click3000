@@ -1,6 +1,5 @@
 package com.sakurafuld.click3000.mixin;
 
-import com.sakurafuld.click3000.Click3000;
 import com.sakurafuld.click3000.Click3000CommonConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -35,7 +34,6 @@ public abstract class ServerGamePacketListenerImplMixin {
 
     @Redirect(method = "handleUseItemOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;useItemOn(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/phys/BlockHitResult;)Lnet/minecraft/world/InteractionResult;"))
     private InteractionResult handlerUseItemOnMixin(ServerPlayerGameMode instance, ServerPlayer player, Level level, ItemStack stack, InteractionHand hand, BlockHitResult hit) {
-        Click3000.LOG.info("ServerUseItemOn!!!!");
         InteractionResult result = InteractionResult.FAIL;
         for (int count = 0; count < Click3000CommonConfig.REPEAT.get(); count++) {
             InteractionResult current = instance.useItemOn(player, level, stack, hand, hit);
@@ -59,7 +57,6 @@ public abstract class ServerGamePacketListenerImplMixin {
 
     @Redirect(method = "handleUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayerGameMode;useItem(Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;"))
     private InteractionResult handleUseItemMixin(ServerPlayerGameMode instance, ServerPlayer player, Level level, ItemStack stack, InteractionHand hand) {
-        Click3000.LOG.info("ServerUseItem!!!!!!!");
         InteractionResult result = InteractionResult.FAIL;
         if (player.gameMode.getGameModeForPlayer() == GameType.SPECTATOR) {
             return InteractionResult.PASS;

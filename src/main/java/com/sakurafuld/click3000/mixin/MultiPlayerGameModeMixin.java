@@ -1,6 +1,5 @@
 package com.sakurafuld.click3000.mixin;
 
-import com.sakurafuld.click3000.Click3000;
 import com.sakurafuld.click3000.Click3000CommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -52,7 +51,6 @@ public abstract class MultiPlayerGameModeMixin {
     private void useItemOnMixin(LocalPlayer pPlayer, InteractionHand pHand, BlockHitResult pResult, CallbackInfoReturnable<InteractionResult> cir) {
         MutableObject<InteractionResult> mutableobject = new MutableObject<>();
         this.startPrediction(this.minecraft.level, sequence -> {
-            Click3000.LOG.info("MultiUseItemOn!!!!");
             BlockHitResult hit = pResult;
             InteractionResult result = InteractionResult.FAIL;
             for (int count = 0; count < Click3000CommonConfig.REPEAT.get(); count++) {
@@ -83,7 +81,6 @@ public abstract class MultiPlayerGameModeMixin {
             if (pPlayer.getCooldowns().isOnCooldown(itemstack.getItem())) {
                 mutableobject.setValue(InteractionResult.PASS);
             } else {
-                Click3000.LOG.info("MultiUseItem!!!!!!!!");
                 InteractionResult result = InteractionResult.FAIL;
                 for (int count = 0; count < Click3000CommonConfig.REPEAT.get(); count++) {
                     if (pPlayer.isUsingItem()) {
