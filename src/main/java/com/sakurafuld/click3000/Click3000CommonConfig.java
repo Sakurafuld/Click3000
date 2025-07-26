@@ -19,7 +19,7 @@ public class Click3000CommonConfig {
         builder.push("Click3000");
         {
             REPEAT = builder
-                    .defineInRange("Click count", 3000, 1, Integer.MAX_VALUE);
+                    .defineInRange("Click count", 3000, 0, Integer.MAX_VALUE);
             RELEASE = builder
                     .defineList("Release per repeating", List.of("minecraft:bow=20", "minecraft:trident=20", "minecraft:crossbow=30", "botania:crystal_bow=20", "botania:slingshot=30", "avaritia:infinity_bow=20"), object -> object instanceof String string && validateRelease(string));
         }
