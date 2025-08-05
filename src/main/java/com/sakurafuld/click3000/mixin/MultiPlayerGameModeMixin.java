@@ -1,6 +1,6 @@
 package com.sakurafuld.click3000.mixin;
 
-import com.sakurafuld.click3000.Click3000CommonConfig;
+import com.sakurafuld.click3000.ClickCommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -8,8 +8,6 @@ import net.minecraft.client.multiplayer.prediction.PredictiveAction;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -21,9 +19,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.mutable.MutableObject;
-import org.apache.commons.lang3.tuple.Triple;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -53,7 +49,8 @@ public abstract class MultiPlayerGameModeMixin {
         this.startPrediction(this.minecraft.level, sequence -> {
             BlockHitResult hit = pResult;
             InteractionResult result = InteractionResult.FAIL;
-            for (int count = 0; count < Click3000CommonConfig.REPEAT.get(); count++) {
+            int repeat = ClickCommonConfig.getRepeat(pPlayer);
+            for (int count = 0; count < repeat; count++) {
                 InteractionResult current = this.performUseItemOn(pPlayer, pHand, hit);
                 if (current.ordinal() < result.ordinal()) {
                     result = current;
@@ -82,34 +79,13 @@ public abstract class MultiPlayerGameModeMixin {
                 mutableobject.setValue(InteractionResult.PASS);
             } else {
                 InteractionResult result = InteractionResult.FAIL;
-                for (int count = 0; count < Click3000CommonConfig.REPEAT.get(); count++) {
+                int repeat = ClickCommonConfig.getRepeat(pPlayer);
+                for (int count = 0; count < repeat; count++) {
                     if (pPlayer.isUsingItem()) {
                         ItemStack stack = pPlayer.getItemInHand(pHand);
                         ((LivingEntityAccessor) pPlayer).invokeUpdateUsingItem(stack);
                         if (count != 0) {
-                            int perRepeating = Click3000CommonConfig.RELEASE.get().stream()
-                                    .map(String.class::cast)
-                                    .map(string -> {
-                                        boolean tag = string.startsWith("#");
-                                        if (tag) {
-                                            string = string.substring(1);
-                                        }
-
-                                        String[] split = string.split("=");
-                                        ResourceLocation identifier = ResourceLocation.parse(split[0]);
-                                        int value = Integer.parseInt(split[1]);
-                                        return Triple.of(tag, identifier, value);
-                                    })
-                                    .filter(triple -> {
-                                        if (triple.getLeft()) {
-                                            return stack.is(ItemTags.create(triple.getMiddle()));
-                                        } else {
-                                            return ForgeRegistries.ITEMS.getKey(stack.getItem()).equals(triple.getMiddle());
-                                        }
-                                    })
-                                    .map(Triple::getRight)
-                                    .findFirst()
-                                    .orElse(-1);
+                            int perRepeating = ClickCommonConfig.getRelease(stack.getItem());
                             if (perRepeating > 0 && count % perRepeating == 0) {
                                 pPlayer.releaseUsingItem();
                             }
