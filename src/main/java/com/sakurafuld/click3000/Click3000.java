@@ -50,7 +50,7 @@ public class Click3000 {
     }
 
     public void tick(TickEvent.PlayerTickEvent event) {
-        if (event.player instanceof ServerPlayer player && player.level().getGameTime() % 20 == 0) {
+        if (event.phase == TickEvent.Phase.END && event.player instanceof ServerPlayer player && player.level().getGameTime() % 20 == 0) {
             ClickConnection.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ClientboundClickSyncSeed(ClickCommonConfig.PLAYER_SEEDS.get().getOrDefault(player.getUUID(), RANDOM.nextLong(Long.MIN_VALUE, 0))));
         }
     }
